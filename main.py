@@ -205,14 +205,14 @@ def main():
 
         print(f"[OK] Security audit completed for {len(audit_reports)} device(s).")
 
-    # 4. Generate Reports
-    print(f"\n[3/3] Generating executive reports and HTML dashboard...")
-    rep_gen = ReportGenerator(reports_dir="reports")
-    md_path = rep_gen.generate_markdown(backup_results, audit_reports)
-    html_path = rep_gen.generate_html(backup_results, audit_reports)
+        # 4. Generate Reports
+        print(f"\n[3/3] Generating executive reports and HTML dashboard...")
+        rep_gen = ReportGenerator(reports_dir="reports")
+        md_path = rep_gen.generate_markdown(backup_results, audit_reports)
+        html_path = rep_gen.generate_html(backup_results, audit_reports)
 
-    print(f"[+] Markdown summary generated : {md_path}")
-    print(f"[+] Modern HTML dashboard      : {html_path}")
+        print(f"[+] Markdown summary generated : {md_path}")
+        print(f"[+] Modern HTML dashboard      : {html_path}")
 
     # 5. Display Terminal Summary Table
     if RICH_AVAILABLE and audit_reports:
