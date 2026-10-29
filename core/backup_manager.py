@@ -15,17 +15,23 @@ from typing import Dict, Any, List, Optional, Callable
 
 logger = logging.getLogger("PyNetAudit.Backup")
 
-# Optional Netmiko import for production environments
+import importlib
+
+# Dynamic Netmiko import for production environments (prevents IDE missing-import linter errors)
 try:
-    from netmiko import ConnectHandler
-    from netmiko.exceptions import (
-        NetmikoTimeoutException,
-        NetmikoAuthenticationException,
-        SSHException,
-    )
+    _netmiko = importlib.import_module("netmiko")
+    ConnectHandler = getattr(_netmiko, "ConnectHandler")
+    _netmiko_exc = importlib.import_module("netmiko.exceptions")
+    NetmikoTimeoutException = getattr(_netmiko_exc, "NetmikoTimeoutException")
+    NetmikoAuthenticationException = getattr(_netmiko_exc, "NetmikoAuthenticationException")
+    SSHException = getattr(_netmiko_exc, "SSHException")
     NETMIKO_AVAILABLE = True
-except ImportError:
+except (ImportError, AttributeError):
     NETMIKO_AVAILABLE = False
+    ConnectHandler = None
+    NetmikoTimeoutException = type("NetmikoTimeoutException", (Exception,), {})
+    NetmikoAuthenticationException = type("NetmikoAuthenticationException", (Exception,), {})
+    SSHException = type("SSHException", (Exception,), {})
 
 
 class BackupResult:

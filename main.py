@@ -24,11 +24,14 @@ import logging
 from datetime import datetime
 from typing import Dict, Any, List
 
+import importlib
+
 # Optional PyYAML import with seamless JSON/simple parser fallback
 try:
-    import yaml
+    yaml = importlib.import_module("yaml")
     YAML_AVAILABLE = True
 except ImportError:
+    yaml = None
     YAML_AVAILABLE = False
 
 # Core modules
@@ -38,13 +41,21 @@ from core.report_generator import ReportGenerator
 
 # Optional Rich library for colorful terminal presentation
 try:
-    from rich.console import Console
-    from rich.table import Table
-    from rich.panel import Panel
-    from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TimeElapsedColumn
+    _rich_console = importlib.import_module("rich.console")
+    Console = getattr(_rich_console, "Console")
+    _rich_table = importlib.import_module("rich.table")
+    Table = getattr(_rich_table, "Table")
+    _rich_panel = importlib.import_module("rich.panel")
+    Panel = getattr(_rich_panel, "Panel")
+    _rich_progress = importlib.import_module("rich.progress")
+    Progress = getattr(_rich_progress, "Progress")
+    SpinnerColumn = getattr(_rich_progress, "SpinnerColumn")
+    TextColumn = getattr(_rich_progress, "TextColumn")
+    BarColumn = getattr(_rich_progress, "BarColumn")
+    TimeElapsedColumn = getattr(_rich_progress, "TimeElapsedColumn")
     RICH_AVAILABLE = True
     console = Console()
-except ImportError:
+except (ImportError, AttributeError):
     RICH_AVAILABLE = False
     console = None
 
