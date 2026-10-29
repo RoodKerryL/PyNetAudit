@@ -1,0 +1,49 @@
+{
+  "devices": [
+    {
+      "hostname": "sw-core-01.corp",
+      "ip": "192.168.10.1",
+      "device_type": "cisco_ios",
+      "role": "Core Switch",
+      "site": "Datacenter-Alpha",
+      "port": 22,
+      "tags": ["core", "critical", "vlan-routing"]
+    },
+    {
+      "hostname": "sw-access-floor1.corp",
+      "ip": "192.168.10.11",
+      "device_type": "cisco_ios",
+      "role": "Access Switch",
+      "site": "HQ-Floor-1",
+      "port": 22,
+      "tags": ["access", "voip", "workstations"]
+    },
+    {
+      "hostname": "sw-access-floor2.corp",
+      "ip": "192.168.10.12",
+      "device_type": "cisco_ios",
+      "role": "Access Switch",
+      "site": "HQ-Floor-2",
+      "port": 22,
+      "tags": ["access", "voip", "cameras"]
+    },
+    {
+      "hostname": "rtr-wan-gateway.corp",
+      "ip": "192.168.1.1",
+      "device_type": "cisco_ios",
+      "role": "WAN Router",
+      "site": "Datacenter-Alpha",
+      "port": 22,
+      "tags": ["edge", "bgp", "nat"]
+    },
+    {
+      "hostname": "sw-dmz-leaf.corp",
+      "ip": "192.168.20.5",
+      "device_type": "cisco_ios",
+      "role": "DMZ Switch",
+      "site": "HQ-Perimeter",
+      "port": 22,
+      "tags": ["dmz", "perimeter", "hardened"]
+    }
+  ]
+}

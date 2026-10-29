@@ -1,0 +1,557 @@
+[
+  {
+    "hostname": "rtr-wan-gateway.corp",
+    "ip": "192.168.1.1",
+    "score": 86.2,
+    "grade": "B",
+    "status": "MINOR_RISK",
+    "passed_rules": 9,
+    "failed_rules": 1,
+    "findings": [
+      {
+        "id": "SEC-001",
+        "name": "Disable Telnet on VTY Lines",
+        "severity": "CRITICAL",
+        "passed": true,
+        "description": "Telnet transmits credentials and payload in cleartext. Only SSH must be accepted.",
+        "remediation": "configure terminal\nline vty 0 15\ntransport input ssh",
+        "evidence": "transport input ssh",
+        "details": "VTY lines strictly restricted to encrypted SSH connections."
+      },
+      {
+        "id": "SEC-002",
+        "name": "Enforce Strong Enable Secret",
+        "severity": "HIGH",
+        "passed": true,
+        "description": "Legacy 'enable password' is vulnerable to rainbow table attacks. Use 'enable secret' (Type 5/8/9).",
+        "remediation": "configure terminal\nno enable password\nenable secret <STRONG_PASSWORD>",
+        "evidence": "enable secret configured",
+        "details": "Strong cryptographic hash used for privileged EXEC access."
+      },
+      {
+        "id": "SEC-003",
+        "name": "Enable Local Password Encryption",
+        "severity": "MEDIUM",
+        "passed": true,
+        "description": "Service password-encryption hides cleartext strings in the running configuration.",
+        "remediation": "configure terminal\nservice password-encryption",
+        "evidence": "service password-encryption",
+        "details": "Type 7 obfuscation active."
+      },
+      {
+        "id": "SEC-004",
+        "name": "Enforce SSH Version 2",
+        "severity": "HIGH",
+        "passed": true,
+        "description": "SSH Version 1 suffers from known cryptographic flaws (CRC-32 compensation attack).",
+        "remediation": "configure terminal\nip ssh version 2",
+        "evidence": "ip ssh version 2",
+        "details": "SSH v2 cryptographic suite active."
+      },
+      {
+        "id": "SEC-005",
+        "name": "Enable AAA New-Model Authentication",
+        "severity": "MEDIUM",
+        "passed": true,
+        "description": "AAA new-model provides standardized authentication, authorization, and accounting controls.",
+        "remediation": "configure terminal\naaa new-model\naaa authentication login default local",
+        "evidence": "aaa new-model",
+        "details": "Modern access control architecture."
+      },
+      {
+        "id": "SEC-006",
+        "name": "Configure Legal Login Banner (MOTD)",
+        "severity": "LOW",
+        "passed": true,
+        "description": "A legal warning banner is required for legal enforcement against unauthorized access.",
+        "remediation": "configure terminal\nbanner motd ^C AUTHORIZED ACCESS ONLY ^C",
+        "evidence": "banner motd present",
+        "details": "Advisory warning active."
+      },
+      {
+        "id": "SEC-007",
+        "name": "Configure Centralized NTP Synchronization",
+        "severity": "MEDIUM",
+        "passed": true,
+        "description": "Synchronized clocks are essential for accurate incident response and forensic log correlation.",
+        "remediation": "configure terminal\nntp server 192.168.10.254",
+        "evidence": "ntp server configured",
+        "details": "Time-sync enables accurate syslog forensics."
+      },
+      {
+        "id": "SEC-008",
+        "name": "Configure Centralized Remote Syslog",
+        "severity": "MEDIUM",
+        "passed": true,
+        "description": "Log buffers fill quickly; events must be forwarded offsite to a SIEM/Syslog server.",
+        "remediation": "configure terminal\nlogging host <SYSLOG_IP>\nlogging trap warnings",
+        "evidence": "logging host configured",
+        "details": "Events streamed to SIEM/central collector."
+      },
+      {
+        "id": "SEC-009",
+        "name": "Avoid Default VLAN 1 for User Traffic",
+        "severity": "HIGH",
+        "passed": false,
+        "description": "VLAN 1 is the default native VLAN and a common target for VLAN hopping / STP manipulation.",
+        "remediation": "configure terminal\ninterface <INT>\nswitchport access vlan <VLAN_ID>",
+        "evidence": "VLAN 1 access ports found",
+        "details": "Interfaces assigned to default VLAN 1. Segregate traffic."
+      },
+      {
+        "id": "SEC-010",
+        "name": "Implement Switchport Port-Security",
+        "severity": "MEDIUM",
+        "passed": true,
+        "description": "Port-Security mitigates MAC-flooding and rogue device attachment on access ports.",
+        "remediation": "configure terminal\ninterface <INT>\nswitchport port-security\nswitchport port-security violation shutdown",
+        "evidence": "switchport port-security active",
+        "details": "MAC address limiters and violation actions configured."
+      }
+    ]
+  },
+  {
+    "hostname": "sw-access-floor1.corp",
+    "ip": "192.168.10.11",
+    "score": 6.9,
+    "grade": "F",
+    "status": "CRITICAL_RISK",
+    "passed_rules": 1,
+    "failed_rules": 9,
+    "findings": [
+      {
+        "id": "SEC-001",
+        "name": "Disable Telnet on VTY Lines",
+        "severity": "CRITICAL",
+        "passed": false,
+        "description": "Telnet transmits credentials and payload in cleartext. Only SSH must be accepted.",
+        "remediation": "configure terminal\nline vty 0 15\ntransport input ssh",
+        "evidence": "transport input includes 'telnet'",
+        "details": "Cleartext Telnet detected in VTY lines. Vulnerable to credential sniffing."
+      },
+      {
+        "id": "SEC-002",
+        "name": "Enforce Strong Enable Secret",
+        "severity": "HIGH",
+        "passed": false,
+        "description": "Legacy 'enable password' is vulnerable to rainbow table attacks. Use 'enable secret' (Type 5/8/9).",
+        "remediation": "configure terminal\nno enable password\nenable secret <STRONG_PASSWORD>",
+        "evidence": "enable password found in config",
+        "details": "Weak reversible password hash detected. Upgrade to enable secret."
+      },
+      {
+        "id": "SEC-003",
+        "name": "Enable Local Password Encryption",
+        "severity": "MEDIUM",
+        "passed": false,
+        "description": "Service password-encryption hides cleartext strings in the running configuration.",
+        "remediation": "configure terminal\nservice password-encryption",
+        "evidence": "no service password-encryption",
+        "details": "Passwords stored in plain text."
+      },
+      {
+        "id": "SEC-004",
+        "name": "Enforce SSH Version 2",
+        "severity": "HIGH",
+        "passed": false,
+        "description": "SSH Version 1 suffers from known cryptographic flaws (CRC-32 compensation attack).",
+        "remediation": "configure terminal\nip ssh version 2",
+        "evidence": "SSH v2 not explicitly enforced",
+        "details": "Vulnerable to SSH v1 fallback."
+      },
+      {
+        "id": "SEC-005",
+        "name": "Enable AAA New-Model Authentication",
+        "severity": "MEDIUM",
+        "passed": true,
+        "description": "AAA new-model provides standardized authentication, authorization, and accounting controls.",
+        "remediation": "configure terminal\naaa new-model\naaa authentication login default local",
+        "evidence": "aaa new-model",
+        "details": "Modern access control architecture."
+      },
+      {
+        "id": "SEC-006",
+        "name": "Configure Legal Login Banner (MOTD)",
+        "severity": "LOW",
+        "passed": false,
+        "description": "A legal warning banner is required for legal enforcement against unauthorized access.",
+        "remediation": "configure terminal\nbanner motd ^C AUTHORIZED ACCESS ONLY ^C",
+        "evidence": "No legal banner configured",
+        "details": "Legal disclaimer missing."
+      },
+      {
+        "id": "SEC-007",
+        "name": "Configure Centralized NTP Synchronization",
+        "severity": "MEDIUM",
+        "passed": false,
+        "description": "Synchronized clocks are essential for accurate incident response and forensic log correlation.",
+        "remediation": "configure terminal\nntp server 192.168.10.254",
+        "evidence": "No NTP server detected",
+        "details": "Clock drifts will compromise logs."
+      },
+      {
+        "id": "SEC-008",
+        "name": "Configure Centralized Remote Syslog",
+        "severity": "MEDIUM",
+        "passed": false,
+        "description": "Log buffers fill quickly; events must be forwarded offsite to a SIEM/Syslog server.",
+        "remediation": "configure terminal\nlogging host <SYSLOG_IP>\nlogging trap warnings",
+        "evidence": "No centralized syslog host",
+        "details": "Local buffer only; logs lost on reboot."
+      },
+      {
+        "id": "SEC-009",
+        "name": "Avoid Default VLAN 1 for User Traffic",
+        "severity": "HIGH",
+        "passed": false,
+        "description": "VLAN 1 is the default native VLAN and a common target for VLAN hopping / STP manipulation.",
+        "remediation": "configure terminal\ninterface <INT>\nswitchport access vlan <VLAN_ID>",
+        "evidence": "VLAN 1 access ports found",
+        "details": "Interfaces assigned to default VLAN 1. Segregate traffic."
+      },
+      {
+        "id": "SEC-010",
+        "name": "Implement Switchport Port-Security",
+        "severity": "MEDIUM",
+        "passed": false,
+        "description": "Port-Security mitigates MAC-flooding and rogue device attachment on access ports.",
+        "remediation": "configure terminal\ninterface <INT>\nswitchport port-security\nswitchport port-security violation shutdown",
+        "evidence": "No port-security found",
+        "details": "Switch vulnerable to MAC flooding."
+      }
+    ]
+  },
+  {
+    "hostname": "sw-access-floor2.corp",
+    "ip": "192.168.10.12",
+    "score": 6.9,
+    "grade": "F",
+    "status": "CRITICAL_RISK",
+    "passed_rules": 1,
+    "failed_rules": 9,
+    "findings": [
+      {
+        "id": "SEC-001",
+        "name": "Disable Telnet on VTY Lines",
+        "severity": "CRITICAL",
+        "passed": false,
+        "description": "Telnet transmits credentials and payload in cleartext. Only SSH must be accepted.",
+        "remediation": "configure terminal\nline vty 0 15\ntransport input ssh",
+        "evidence": "transport input includes 'telnet'",
+        "details": "Cleartext Telnet detected in VTY lines. Vulnerable to credential sniffing."
+      },
+      {
+        "id": "SEC-002",
+        "name": "Enforce Strong Enable Secret",
+        "severity": "HIGH",
+        "passed": false,
+        "description": "Legacy 'enable password' is vulnerable to rainbow table attacks. Use 'enable secret' (Type 5/8/9).",
+        "remediation": "configure terminal\nno enable password\nenable secret <STRONG_PASSWORD>",
+        "evidence": "enable password found in config",
+        "details": "Weak reversible password hash detected. Upgrade to enable secret."
+      },
+      {
+        "id": "SEC-003",
+        "name": "Enable Local Password Encryption",
+        "severity": "MEDIUM",
+        "passed": false,
+        "description": "Service password-encryption hides cleartext strings in the running configuration.",
+        "remediation": "configure terminal\nservice password-encryption",
+        "evidence": "no service password-encryption",
+        "details": "Passwords stored in plain text."
+      },
+      {
+        "id": "SEC-004",
+        "name": "Enforce SSH Version 2",
+        "severity": "HIGH",
+        "passed": false,
+        "description": "SSH Version 1 suffers from known cryptographic flaws (CRC-32 compensation attack).",
+        "remediation": "configure terminal\nip ssh version 2",
+        "evidence": "SSH v2 not explicitly enforced",
+        "details": "Vulnerable to SSH v1 fallback."
+      },
+      {
+        "id": "SEC-005",
+        "name": "Enable AAA New-Model Authentication",
+        "severity": "MEDIUM",
+        "passed": true,
+        "description": "AAA new-model provides standardized authentication, authorization, and accounting controls.",
+        "remediation": "configure terminal\naaa new-model\naaa authentication login default local",
+        "evidence": "aaa new-model",
+        "details": "Modern access control architecture."
+      },
+      {
+        "id": "SEC-006",
+        "name": "Configure Legal Login Banner (MOTD)",
+        "severity": "LOW",
+        "passed": false,
+        "description": "A legal warning banner is required for legal enforcement against unauthorized access.",
+        "remediation": "configure terminal\nbanner motd ^C AUTHORIZED ACCESS ONLY ^C",
+        "evidence": "No legal banner configured",
+        "details": "Legal disclaimer missing."
+      },
+      {
+        "id": "SEC-007",
+        "name": "Configure Centralized NTP Synchronization",
+        "severity": "MEDIUM",
+        "passed": false,
+        "description": "Synchronized clocks are essential for accurate incident response and forensic log correlation.",
+        "remediation": "configure terminal\nntp server 192.168.10.254",
+        "evidence": "No NTP server detected",
+        "details": "Clock drifts will compromise logs."
+      },
+      {
+        "id": "SEC-008",
+        "name": "Configure Centralized Remote Syslog",
+        "severity": "MEDIUM",
+        "passed": false,
+        "description": "Log buffers fill quickly; events must be forwarded offsite to a SIEM/Syslog server.",
+        "remediation": "configure terminal\nlogging host <SYSLOG_IP>\nlogging trap warnings",
+        "evidence": "No centralized syslog host",
+        "details": "Local buffer only; logs lost on reboot."
+      },
+      {
+        "id": "SEC-009",
+        "name": "Avoid Default VLAN 1 for User Traffic",
+        "severity": "HIGH",
+        "passed": false,
+        "description": "VLAN 1 is the default native VLAN and a common target for VLAN hopping / STP manipulation.",
+        "remediation": "configure terminal\ninterface <INT>\nswitchport access vlan <VLAN_ID>",
+        "evidence": "VLAN 1 access ports found",
+        "details": "Interfaces assigned to default VLAN 1. Segregate traffic."
+      },
+      {
+        "id": "SEC-010",
+        "name": "Implement Switchport Port-Security",
+        "severity": "MEDIUM",
+        "passed": false,
+        "description": "Port-Security mitigates MAC-flooding and rogue device attachment on access ports.",
+        "remediation": "configure terminal\ninterface <INT>\nswitchport port-security\nswitchport port-security violation shutdown",
+        "evidence": "No port-security found",
+        "details": "Switch vulnerable to MAC flooding."
+      }
+    ]
+  },
+  {
+    "hostname": "sw-core-01.corp",
+    "ip": "192.168.10.1",
+    "score": 86.2,
+    "grade": "B",
+    "status": "MINOR_RISK",
+    "passed_rules": 9,
+    "failed_rules": 1,
+    "findings": [
+      {
+        "id": "SEC-001",
+        "name": "Disable Telnet on VTY Lines",
+        "severity": "CRITICAL",
+        "passed": true,
+        "description": "Telnet transmits credentials and payload in cleartext. Only SSH must be accepted.",
+        "remediation": "configure terminal\nline vty 0 15\ntransport input ssh",
+        "evidence": "transport input ssh",
+        "details": "VTY lines strictly restricted to encrypted SSH connections."
+      },
+      {
+        "id": "SEC-002",
+        "name": "Enforce Strong Enable Secret",
+        "severity": "HIGH",
+        "passed": true,
+        "description": "Legacy 'enable password' is vulnerable to rainbow table attacks. Use 'enable secret' (Type 5/8/9).",
+        "remediation": "configure terminal\nno enable password\nenable secret <STRONG_PASSWORD>",
+        "evidence": "enable secret configured",
+        "details": "Strong cryptographic hash used for privileged EXEC access."
+      },
+      {
+        "id": "SEC-003",
+        "name": "Enable Local Password Encryption",
+        "severity": "MEDIUM",
+        "passed": true,
+        "description": "Service password-encryption hides cleartext strings in the running configuration.",
+        "remediation": "configure terminal\nservice password-encryption",
+        "evidence": "service password-encryption",
+        "details": "Type 7 obfuscation active."
+      },
+      {
+        "id": "SEC-004",
+        "name": "Enforce SSH Version 2",
+        "severity": "HIGH",
+        "passed": true,
+        "description": "SSH Version 1 suffers from known cryptographic flaws (CRC-32 compensation attack).",
+        "remediation": "configure terminal\nip ssh version 2",
+        "evidence": "ip ssh version 2",
+        "details": "SSH v2 cryptographic suite active."
+      },
+      {
+        "id": "SEC-005",
+        "name": "Enable AAA New-Model Authentication",
+        "severity": "MEDIUM",
+        "passed": true,
+        "description": "AAA new-model provides standardized authentication, authorization, and accounting controls.",
+        "remediation": "configure terminal\naaa new-model\naaa authentication login default local",
+        "evidence": "aaa new-model",
+        "details": "Modern access control architecture."
+      },
+      {
+        "id": "SEC-006",
+        "name": "Configure Legal Login Banner (MOTD)",
+        "severity": "LOW",
+        "passed": true,
+        "description": "A legal warning banner is required for legal enforcement against unauthorized access.",
+        "remediation": "configure terminal\nbanner motd ^C AUTHORIZED ACCESS ONLY ^C",
+        "evidence": "banner motd present",
+        "details": "Advisory warning active."
+      },
+      {
+        "id": "SEC-007",
+        "name": "Configure Centralized NTP Synchronization",
+        "severity": "MEDIUM",
+        "passed": true,
+        "description": "Synchronized clocks are essential for accurate incident response and forensic log correlation.",
+        "remediation": "configure terminal\nntp server 192.168.10.254",
+        "evidence": "ntp server configured",
+        "details": "Time-sync enables accurate syslog forensics."
+      },
+      {
+        "id": "SEC-008",
+        "name": "Configure Centralized Remote Syslog",
+        "severity": "MEDIUM",
+        "passed": true,
+        "description": "Log buffers fill quickly; events must be forwarded offsite to a SIEM/Syslog server.",
+        "remediation": "configure terminal\nlogging host <SYSLOG_IP>\nlogging trap warnings",
+        "evidence": "logging host configured",
+        "details": "Events streamed to SIEM/central collector."
+      },
+      {
+        "id": "SEC-009",
+        "name": "Avoid Default VLAN 1 for User Traffic",
+        "severity": "HIGH",
+        "passed": false,
+        "description": "VLAN 1 is the default native VLAN and a common target for VLAN hopping / STP manipulation.",
+        "remediation": "configure terminal\ninterface <INT>\nswitchport access vlan <VLAN_ID>",
+        "evidence": "VLAN 1 access ports found",
+        "details": "Interfaces assigned to default VLAN 1. Segregate traffic."
+      },
+      {
+        "id": "SEC-010",
+        "name": "Implement Switchport Port-Security",
+        "severity": "MEDIUM",
+        "passed": true,
+        "description": "Port-Security mitigates MAC-flooding and rogue device attachment on access ports.",
+        "remediation": "configure terminal\ninterface <INT>\nswitchport port-security\nswitchport port-security violation shutdown",
+        "evidence": "switchport port-security active",
+        "details": "MAC address limiters and violation actions configured."
+      }
+    ]
+  },
+  {
+    "hostname": "sw-dmz-leaf.corp",
+    "ip": "192.168.20.5",
+    "score": 86.2,
+    "grade": "B",
+    "status": "MINOR_RISK",
+    "passed_rules": 9,
+    "failed_rules": 1,
+    "findings": [
+      {
+        "id": "SEC-001",
+        "name": "Disable Telnet on VTY Lines",
+        "severity": "CRITICAL",
+        "passed": true,
+        "description": "Telnet transmits credentials and payload in cleartext. Only SSH must be accepted.",
+        "remediation": "configure terminal\nline vty 0 15\ntransport input ssh",
+        "evidence": "transport input ssh",
+        "details": "VTY lines strictly restricted to encrypted SSH connections."
+      },
+      {
+        "id": "SEC-002",
+        "name": "Enforce Strong Enable Secret",
+        "severity": "HIGH",
+        "passed": true,
+        "description": "Legacy 'enable password' is vulnerable to rainbow table attacks. Use 'enable secret' (Type 5/8/9).",
+        "remediation": "configure terminal\nno enable password\nenable secret <STRONG_PASSWORD>",
+        "evidence": "enable secret configured",
+        "details": "Strong cryptographic hash used for privileged EXEC access."
+      },
+      {
+        "id": "SEC-003",
+        "name": "Enable Local Password Encryption",
+        "severity": "MEDIUM",
+        "passed": true,
+        "description": "Service password-encryption hides cleartext strings in the running configuration.",
+        "remediation": "configure terminal\nservice password-encryption",
+        "evidence": "service password-encryption",
+        "details": "Type 7 obfuscation active."
+      },
+      {
+        "id": "SEC-004",
+        "name": "Enforce SSH Version 2",
+        "severity": "HIGH",
+        "passed": true,
+        "description": "SSH Version 1 suffers from known cryptographic flaws (CRC-32 compensation attack).",
+        "remediation": "configure terminal\nip ssh version 2",
+        "evidence": "ip ssh version 2",
+        "details": "SSH v2 cryptographic suite active."
+      },
+      {
+        "id": "SEC-005",
+        "name": "Enable AAA New-Model Authentication",
+        "severity": "MEDIUM",
+        "passed": true,
+        "description": "AAA new-model provides standardized authentication, authorization, and accounting controls.",
+        "remediation": "configure terminal\naaa new-model\naaa authentication login default local",
+        "evidence": "aaa new-model",
+        "details": "Modern access control architecture."
+      },
+      {
+        "id": "SEC-006",
+        "name": "Configure Legal Login Banner (MOTD)",
+        "severity": "LOW",
+        "passed": true,
+        "description": "A legal warning banner is required for legal enforcement against unauthorized access.",
+        "remediation": "configure terminal\nbanner motd ^C AUTHORIZED ACCESS ONLY ^C",
+        "evidence": "banner motd present",
+        "details": "Advisory warning active."
+      },
+      {
+        "id": "SEC-007",
+        "name": "Configure Centralized NTP Synchronization",
+        "severity": "MEDIUM",
+        "passed": true,
+        "description": "Synchronized clocks are essential for accurate incident response and forensic log correlation.",
+        "remediation": "configure terminal\nntp server 192.168.10.254",
+        "evidence": "ntp server configured",
+        "details": "Time-sync enables accurate syslog forensics."
+      },
+      {
+        "id": "SEC-008",
+        "name": "Configure Centralized Remote Syslog",
+        "severity": "MEDIUM",
+        "passed": true,
+        "description": "Log buffers fill quickly; events must be forwarded offsite to a SIEM/Syslog server.",
+        "remediation": "configure terminal\nlogging host <SYSLOG_IP>\nlogging trap warnings",
+        "evidence": "logging host configured",
+        "details": "Events streamed to SIEM/central collector."
+      },
+      {
+        "id": "SEC-009",
+        "name": "Avoid Default VLAN 1 for User Traffic",
+        "severity": "HIGH",
+        "passed": false,
+        "description": "VLAN 1 is the default native VLAN and a common target for VLAN hopping / STP manipulation.",
+        "remediation": "configure terminal\ninterface <INT>\nswitchport access vlan <VLAN_ID>",
+        "evidence": "VLAN 1 access ports found",
+        "details": "Interfaces assigned to default VLAN 1. Segregate traffic."
+      },
+      {
+        "id": "SEC-010",
+        "name": "Implement Switchport Port-Security",
+        "severity": "MEDIUM",
+        "passed": true,
+        "description": "Port-Security mitigates MAC-flooding and rogue device attachment on access ports.",
+        "remediation": "configure terminal\ninterface <INT>\nswitchport port-security\nswitchport port-security violation shutdown",
+        "evidence": "switchport port-security active",
+        "details": "MAC address limiters and violation actions configured."
+      }
+    ]
+  }
+]
